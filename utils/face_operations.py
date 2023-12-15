@@ -9,6 +9,7 @@ Created on Thu Dec 14 18:01:19 2023
 import face_recognition
 import numpy as np
 from sklearn.metrics import silhouette_score
+import time
 
 def detect_faces(img_content):
     face_coords = face_recognition.face_locations(img_content)
@@ -53,8 +54,6 @@ def cluster_faces_kmeans(img_face_vectors,k, n_iter):
         # Use np.vstack to stack the selected rows vertically
         c = np.vstack(img_vectors[random_rows_indices])
     
-        # c = np.vstack((img_vectors[0],img_vectors[5],img_vectors[11],img_vectors[16],img_vectors[21],img_vectors[27]))
-    
         c_extended = c[: , np.newaxis, :]
     
     
@@ -75,5 +74,7 @@ def cluster_faces_kmeans(img_face_vectors,k, n_iter):
         if score > max_silhouette_score:
             max_silhouette_score = score
             final_clusters = new_clusters
+        
+        time.sleep(1)
     
     return img_vectors, final_clusters

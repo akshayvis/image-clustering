@@ -15,24 +15,31 @@ import pandas as pd
 
 def main():
     
-    #Images are ignored in git
-    img_dir = '/imgs'
+    #Images are ignored in github using .gitignore
+    img_dir = 'imgs'
 
     df_columns=['img_name','img_path','img_content','img_face','face_vector','cluster']
     
     img_data = []
     
+    print('Started: Image Read and Face Detection')
+    
     for img_name in sorted(os.listdir(img_dir)):
-        if img_name == '.DS_Store':
-            continue
         img_path = os.path.join(img_dir, img_name)
         img_content = read_image(img_path)
-        img_face, face_vector = detect_faces(img_content)
-        img_data.append([img_name,img_path,img_content,img_face,face_vector,None])
+        if len(img_content)>0:
+            img_face, face_vector = detect_faces(img_content)
+            img_data.append([img_name,img_path,img_content,img_face,face_vector,None])
+    
+    print('Completed: Image Read and Face Detection')
     
     df = pd.DataFrame(img_data, columns=df_columns)
     
+    print('Started: Image Clustering')
+    
     img_vectors, clusters = cluster_faces_kmeans(df['face_vector'].tolist(),6,20)
+    
+    print('Completed: Image Clustering')
     
     df['cluster'] = clusters
     
@@ -41,6 +48,8 @@ def main():
     for i, row in df.iterrows():
         result_images[row['cluster']].append(row['img_name'])
         
+    print('Clustering Results:')
+
     for image_cluster in  result_images:
         print(image_cluster)
 
